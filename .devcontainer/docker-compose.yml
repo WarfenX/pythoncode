@@ -1,0 +1,51 @@
+# Volumes are kinda like defining AWS EBS volumes. They live seperate from the container.
+# When a container is destroyed and recreated, it still uses the same volume so no data is lost.
+
+volumes:
+   kube-volume:
+   aws-creds-volume:
+   k9s-volume:
+   yacli-venv:
+   poetry-cache:
+
+services:
+   # NOTE: if more services are added to the docker-compose, they need to be added to `runServices`
+   # in the devcontainer.json as well.
+   vscode:
+     cap_add:
+       - SYS_PTRACE
+     env_file:
+       - base.devcontainer.env
+     build:
+       context: ./../
+       dockerfile: ./.devcontainer/Dockerfile
+     image: basedevcontainer
+     ports:
+       - 8009:8000
+     volumes:
+       - ./..:/workspace
+       # python virtual environment and poetry cache
+       - yacli-venv:/workspace/.venv
+       - poetry-cache:/workspace/.devcontainer/.poetry-cache
+       # k8s
+       - kube-volume:/home/vscode/.kube
+       # Let k9s use a volume so it is a little faster
+       - k9s-volume:/workspace/.k9s
+       # Aws credentials mounted so it lasts for different container runs
+       - aws-creds-volume:/home/vscode/.aws
+       # The AWS SSO profiles to use for EKS:
+       - ./../sso-profiles:/home/vscode/.aws/config
+       # SSH for git commands:
+       - ~/.ssh:/home/vscode/.ssh
+       # Docker socket to access Docker server
+       - /var/run/docker.sock:/var/run/docker.sock
+       # ZSH history
+       - ~/.zsh_history:/home/vscode/.zsh_history
+       # Misc host home files - these are put in a temp location so that the devcontainer doesn't clobber them.
+       - ~/.netrc:/tmp/home/.netrc
+       - ~/.zshrc:/tmp/home/.zshrc
+       - ~/.bashrc:/tmp/home/.bashrc
+       - ~/.oh-my-zsh:/tmp/home/.oh-my-zsh
+       - ~/.localrc:/tmp/home/.localrc
+       - ~/.gitconfig:/tmp/home/.gitconfig
+     entrypoint: ["zsh", "-c", "while sleep 1000; do :; done"]

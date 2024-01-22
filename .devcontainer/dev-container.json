@@ -1,0 +1,46 @@
+{
+    "name": "Python 3",
+    "dockerComposeFile": [
+        "docker-compose.yml"
+    ],
+    "shutdownAction": "stopCompose",
+    "postCreateCommand": "git config --global --add safe.directory /workspace && zsh ./.devcontainer/post-create-command.bash",
+    "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && ssh-keyscan github.com >> ~/.ssh/known_hosts && sudo usermod -aG docker vscode && sudo chmod 666 /var/run/docker.sock",
+    "workspaceFolder": "/workspace",
+    "service": "vscode",
+    "remoteUser": "vscode",
+    "runServices": [
+        "vscode"
+    ],
+    "overrideCommand": true,
+    "features": {
+        "git": "os-provided",
+        "sshd": "latest"
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "files.eol": "\n",
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "/usr/bin/zsh"
+                    }
+                },
+                "remote.extensionKind": {
+                    "ms-azuretools.vscode-docker": "workspace"
+                }
+            },
+            "extensions": [
+                "oderwat.indent-rainbow",
+                "ms-azuretools.vscode-docker",
+                "Tyriar.sort-lines",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "nhoizey.gremlins",
+                "njpwerner.autodocstring"
+            ],
+            "editor.insertSpaces": true,
+            "editor.tabSize": 4
+        }
+    }
+}
