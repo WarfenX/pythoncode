@@ -11,7 +11,7 @@ def split_integer(number,parts):
     
     return myoutput + myremainders
     
-
+print("result =", split_integer(7,3))
 print("result =", split_integer(7,3))
 print("result =", split_integer(10,2))
 print("result =", split_integer(10,4))
